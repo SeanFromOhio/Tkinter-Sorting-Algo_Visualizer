@@ -89,12 +89,19 @@ def sort_selection():
     current_sort = selected_algo.get()
     if current_sort == "Bubble Sort":
         bubble_sort(data, sort_speed.get())
+
     elif current_sort == "Heap Sort":
-        heap_sort(data, sort_speed.get())
+        insertion_sort(data, sort_speed.get())
+
     elif current_sort == "Merge Sort":
         merge_sort(data, sort_speed.get())
+
     else:
-        quick_sort(data, sort_speed.get())
+        quick_sort(data, 0, len(data) - 1, sort_speed.get())
+
+    # Completion = All bars become green
+    color_array = ["green" for _i in range(0, len(data))]
+    draw_data(data, color_array)
 
 
 # Frame / Base Layout
@@ -154,21 +161,71 @@ def bubble_sort(data, sort_speed):
                 draw_data(data, color_array)
                 time.sleep(sort_speed)
     # print(data)
-    # Completion = All bars become green
-    color_array = ["green" for _i in range(0, len(data))]
-    draw_data(data, color_array)
 
 
-def heap_sort(data, sort_speed):
+def insertion_sort(data, sort_speed):
     return None
 
 
+# Merge Sort --> https://www.geeksforgeeks.org/merge-sort/
 def merge_sort(data, sort_speed):
-    return None
+    if len(data) > 0
+        middle = len(data) // 2  # Split Point Index
+        left_half = data[: middle]
+        right_half = data[middle + 1:]
+        left_half = merge_sort(left_half, sort_speed)
+        right_half = merge_sort(right_half, sort_speed)
 
 
-def quick_sort(data, sort_speed):
-    return None
+    return data
+
+
+# Quick Sort --> https://www.geeksforgeeks.org/quick-sort/
+def quick_sort(data, low, high, sort_speed):
+    if low < high:  # Base Case
+        p_i = partition(data, low, high, sort_speed)  # Helper function that returns the partition index
+
+        quick_sort(data, low, p_i - 1, sort_speed)  # Left side of partition index, which will run 1st in the animation
+        quick_sort(data, p_i + 1, high, sort_speed)  # Right side of partition index
+
+
+# Quick Sort Helper Function
+def partition(data, low, high, sort_speed):
+    i = (low - 1)  # This points to an element of smaller value, and stops before a larger value than the pivot
+    pivot = data[high]
+
+    draw_data(data, get_color_array(len(data), low, high, i))
+    time.sleep(sort_speed)
+
+    for j in range(low, high):
+        if data[j] < pivot:
+            i += 1  # This now points to an element with value greater than the pivot value
+            data[i], data[j] = data[j], data[i]  # Swap these values putting the larger value further to the right
+
+            draw_data(data, get_color_array(len(data), low, high, i, j))
+            time.sleep(sort_speed)
+
+    data[i + 1], data[high] = data[high], data[i + 1]  # This swaps the final larger value with the pivot itself
+
+    draw_data(data, get_color_array(len(data), low, high, i))
+    time.sleep(sort_speed)
+
+    return i + 1  # This is the final position of the pivot index
+
+
+def get_color_array(data_length, low, high, smaller_val, comparison_val=None):
+    color_array = ["red" for _i in range(0, data_length)]  # Base coloring is all red
+    for i in range(0, data_length):
+        if i == low:
+            color_array[i] = "green"
+        elif i == high:
+            color_array[i] = "green"
+        if i == smaller_val:
+            color_array[i] = "purple"
+        if i == comparison_val:
+            color_array[i] = "blue"
+
+    return color_array
 
 
 root.mainloop()
