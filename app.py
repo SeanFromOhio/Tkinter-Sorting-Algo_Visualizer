@@ -91,10 +91,10 @@ def sort_selection():
         bubble_sort(data, sort_speed.get())
 
     elif current_sort == "Heap Sort":
-        insertion_sort(data, sort_speed.get())
+        heap_sort(data, sort_speed.get())
 
     elif current_sort == "Merge Sort":
-        merge_sort(data, sort_speed.get())
+        merge_sort(data, 0, len(data) - 1, sort_speed.get())
 
     else:
         quick_sort(data, 0, len(data) - 1, sort_speed.get())
@@ -163,21 +163,88 @@ def bubble_sort(data, sort_speed):
     # print(data)
 
 
-def insertion_sort(data, sort_speed):
-    return None
+def heap_sort(data, sort_speed):
+    n = len(data)
+
+    # Max Heap Function (1st step in algo)
+    for i in range((n // 2) - 1, -1, -1):
+        heapify(data, n, i, sort_speed)
+
+    # Heapify Function (2nd step after creating the max heap)
+    for i in range(n-1, 0, -1):
+        print("------ HELLO ------")
+        data[i], data[0] = data[0], data[i]
+        heapify(data, i, 0, sort_speed)
 
 
-# Merge Sort --> https://www.geeksforgeeks.org/merge-sort/
-def merge_sort(data, sort_speed):
-    if len(data) > 0
-        middle = len(data) // 2  # Split Point Index
-        left_half = data[: middle]
-        right_half = data[middle + 1:]
-        left_half = merge_sort(left_half, sort_speed)
-        right_half = merge_sort(right_half, sort_speed)
+def heapify(data, n, i, sort_speed):
+    largest_val = i  # Largest Valued Index
+    # print(largest_val)
+    l_child = (2 * i) + 1  # Left Child Index
+    r_child = (2 * i) + 2  # Right Child Index
+    # print(l_child, r_child)
+
+    draw_data(data, hs_get_color_array(len(data), l_child, r_child, largest_val))
+    time.sleep(sort_speed)
+
+    if l_child < n and data[i] < data[l_child]:  # Check if the left child is larger than the parent
+        largest_val = l_child
+
+        draw_data(data, hs_get_color_array(len(data), l_child, r_child, largest_val))
+        time.sleep(sort_speed)
+
+    if r_child < n and data[largest_val] < data[r_child]:  # Check if the right child is larger than the parent
+        largest_val = r_child
+
+        draw_data(data, hs_get_color_array(len(data), l_child, r_child, largest_val))
+        time.sleep(sort_speed)
+
+    # i is initialized from the end of the data array, so by swapping below, we move the larger value to the end = sort
+    if largest_val != i:  # Sort of a Base Case, which will end a recursive run of the heapify function
+        data[i], data[largest_val] = data[largest_val], data[i]  # Swap parent and larger valued child indices
+        print(i)
+        draw_data(data, hs_get_color_array(len(data), l_child, r_child, largest_val))
+        time.sleep(sort_speed)
+
+        heapify(data, n, largest_val, sort_speed)
 
 
-    return data
+# Merge Sort --> https://www.geeksforgeeks.org/merge-sort/ * Visualization purposes needed it down inplace *
+def merge_sort(data, left, right, sort_speed):
+    if left < right:
+        middle = (left + right) // 2  # Split Point Index
+        merge_sort(data, left, middle, sort_speed)  # Split the function down by splitting it in half recursively
+        merge_sort(data, middle + 1, right, sort_speed)
+        merge(data, left, middle, right, sort_speed)  # This compares and merges the elements back together in order
+
+
+def merge(data, left, middle, right, sort_speed):
+    draw_data(data, ms_get_color_array(len(data), left, middle, right))
+    time.sleep(sort_speed)
+
+    left_half = data[left: middle+1]
+    right_half = data[middle+1: right + 1]
+
+    l_index = r_index = 0
+
+    for data_index in range(left, right + 1):
+        if l_index < len(left_half) and r_index < len(right_half):
+            if left_half[l_index] <= right_half[r_index]:
+                data[data_index] = left_half[l_index]
+                l_index += 1
+            else:
+                data[data_index] = right_half[r_index]
+                r_index += 1
+
+        elif l_index < len(left_half):
+            data[data_index] = left_half[l_index]
+            l_index += 1
+        else:
+            data[data_index] = right_half[r_index]
+            r_index += 1
+
+    draw_data(data, ["green" if left <= x <= right else "white" for x in range(0, len(data))])
+    time.sleep(sort_speed)
 
 
 # Quick Sort --> https://www.geeksforgeeks.org/quick-sort/
@@ -194,7 +261,7 @@ def partition(data, low, high, sort_speed):
     i = (low - 1)  # This points to an element of smaller value, and stops before a larger value than the pivot
     pivot = data[high]
 
-    draw_data(data, get_color_array(len(data), low, high, i))
+    draw_data(data, qs_get_color_array(len(data), low, high, i))
     time.sleep(sort_speed)
 
     for j in range(low, high):
@@ -202,18 +269,48 @@ def partition(data, low, high, sort_speed):
             i += 1  # This now points to an element with value greater than the pivot value
             data[i], data[j] = data[j], data[i]  # Swap these values putting the larger value further to the right
 
-            draw_data(data, get_color_array(len(data), low, high, i, j))
+            draw_data(data, qs_get_color_array(len(data), low, high, i, j))
             time.sleep(sort_speed)
 
     data[i + 1], data[high] = data[high], data[i + 1]  # This swaps the final larger value with the pivot itself
 
-    draw_data(data, get_color_array(len(data), low, high, i))
+    draw_data(data, qs_get_color_array(len(data), low, high, i))
     time.sleep(sort_speed)
 
     return i + 1  # This is the final position of the pivot index
 
 
-def get_color_array(data_length, low, high, smaller_val, comparison_val=None):
+# Below are specific coloring functions per sort type ------
+def hs_get_color_array(data_length, l_child, r_child, largest_val):
+    color_array = ["red" for _i in range(0, len(data))]
+
+    if l_child < data_length:
+        color_array[l_child] = "green"
+    if r_child < data_length:
+        color_array[r_child] = "green"
+    color_array[largest_val] = "yellow"
+
+    #if sorted_index:
+
+    return color_array
+
+
+def ms_get_color_array(data_length, left, middle, right):
+    color_array = []
+
+    for i in range(0, data_length):
+        if left <= i <= right:
+            if left <= i <= middle:
+                color_array.append("yellow")
+            else:
+                color_array.append("pink")
+        else:
+            color_array.append("white")
+
+    return color_array
+
+
+def qs_get_color_array(data_length, low, high, smaller_val, comparison_val=None):
     color_array = ["red" for _i in range(0, data_length)]  # Base coloring is all red
     for i in range(0, data_length):
         if i == low:
