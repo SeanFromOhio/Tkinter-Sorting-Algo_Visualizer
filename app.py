@@ -13,6 +13,7 @@ selected_algo = StringVar()
 data = []  # Global Data Array
 
 
+# Function to draw the data (create the plot)
 def draw_data(data, color_array):
     # Clear the canvas every time you want to redraw the rectangles (plot)
     canvas.delete("all")
@@ -43,6 +44,7 @@ def draw_data(data, color_array):
     root.update()
 
 
+# Generate Array Function
 def generate():
     global data
 
@@ -61,10 +63,10 @@ def generate():
     except:
         size_val = 10
 
-    if min_val < 0:
+    if min_val < 0 or min_val > 100:
         min_val = 0
 
-    if max_val > 100:
+    if max_val > 100 or max_val < 100:
         max_val = 100
 
     if size_val > 50 or size_val < 3:
@@ -104,29 +106,44 @@ def sort_selection():
     draw_data(data, color_array)
 
 
-# Frame / Base Layout
+# ----- Frame / Base Layout -----
 UI_FRAME = Frame(root, width=800, height=200, bg="white")
 UI_FRAME.grid(row=0, column=0, padx=10, pady=5)
 
 canvas = Canvas(root, width=800, height=380, bg="white")
 canvas.grid(row=1, column=0, padx=10, pady=5)
 
-# User Interface Layout
+# ----- User Interface Layout -----
 # Row[0 & 1] -----
+
+
+# Validation for user entry -----
+def validate(user_entry):
+    if not user_entry:
+        return True
+
+    try:
+        user_entry = int(user_entry)
+        return True
+    except ValueError:
+        return False
+
+
+vcmd = root.register(validate)  # Validate Command // must wrap the function
 
 # Array Size
 Label(UI_FRAME, text="Size [3-25]", bg="white").grid(row=0, column=0, padx=5, pady=5, sticky=S)
-size_entry = Entry(UI_FRAME)
+size_entry = Entry(UI_FRAME, validate="key", validatecommand=(vcmd, "%P"))
 size_entry.grid(row=1, column=0, padx=5, pady=5, sticky=W)
 
 # Min Value Entry
 Label(UI_FRAME, text="Min Value [0]", bg="white").grid(row=0, column=1, padx=5, pady=5)
-min_entry = Entry(UI_FRAME)
+min_entry = Entry(UI_FRAME, validate="key", validatecommand=(vcmd, "%P"))
 min_entry.grid(row=1, column=1, padx=5, pady=5, sticky=W)
 
 # Max Value Entry
 Label(UI_FRAME, text="Max Value [100]", bg="white").grid(row=0, column=2, padx=5, pady=5)
-max_entry = Entry(UI_FRAME)
+max_entry = Entry(UI_FRAME, validate="key", validatecommand=(vcmd, "%P"))
 max_entry.grid(row=1, column=2, padx=5, pady=5, sticky=W)
 
 # Row[2] -----
@@ -155,7 +172,7 @@ algo_menu.current(0)
 ttk.Button(UI_FRAME, text="Sort", command=sort_selection, width=11, style="TButton").grid(row=4, column=1, padx=5, pady=5)
 
 
-# ALGORITHMS -----
+# ----- ALGORITHMS -----
 
 # Bubble Sort --> https://www.geeksforgeeks.org/python-program-for-bubble-sort/
 def bubble_sort(data, sort_speed):
