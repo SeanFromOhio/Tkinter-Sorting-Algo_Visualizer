@@ -10,7 +10,7 @@ root.config(bg="black")
 
 # Variables
 selected_algo = StringVar()
-data = []
+data = []  # Global Data Array
 
 
 def draw_data(data, color_array):
@@ -67,8 +67,8 @@ def generate():
     if max_val > 100:
         max_val = 100
 
-    if size_val > 30 or size_val < 3:
-        size_val = 25
+    if size_val > 50 or size_val < 3:
+        size_val = 50
 
     if min_val > max_val:
         min_val, max_val = max_val, min_val
@@ -105,48 +105,54 @@ def sort_selection():
 
 
 # Frame / Base Layout
-UI_FRAME = Frame(root, width=800, height=200, bg="grey")
+UI_FRAME = Frame(root, width=800, height=200, bg="white")
 UI_FRAME.grid(row=0, column=0, padx=10, pady=5)
 
 canvas = Canvas(root, width=800, height=380, bg="white")
 canvas.grid(row=1, column=0, padx=10, pady=5)
 
 # User Interface Layout
-# Row[0] -----
-
-# Sorting Method Selection
-Label(UI_FRAME, text="Algorithm: ", bg="grey").grid(row=0, column=0, padx=5, pady=5, sticky=W)
-algo_menu = ttk.Combobox(UI_FRAME, textvariable=selected_algo, values=[
-    "Bubble Sort", "Heap Sort", "Merge Sort", "Quick Sort"]
-                         )
-algo_menu.grid(row=0, column=1, padx=5, pady=5)
-algo_menu.current(0)
-
-# Sorting Speed Slider
-sort_speed = Scale(UI_FRAME, from_=.1, to=2, orient=HORIZONTAL, resolution=.2, digits=2,
-                   label="Sort Speed [s]", length=200)
-sort_speed.grid(row=0, column=3, padx=5, pady=5)
-
-# Generate & Sort Buttons
-Button(UI_FRAME, text="Generate Array", command=generate, background="green").grid(row=0, column=2, padx=5, pady=5)
-Button(UI_FRAME, text="Sort", command=sort_selection, bg="red").grid(row=0, column=4, padx=5, pady=5)
-
-# Row[1] -----
+# Row[0 & 1] -----
 
 # Array Size
-Label(UI_FRAME, text="Size [3-25]", bg="grey").grid(row=1, column=0, padx=5, pady=5, sticky=W)
+Label(UI_FRAME, text="Size [3-25]", bg="white").grid(row=0, column=0, padx=5, pady=5, sticky=S)
 size_entry = Entry(UI_FRAME)
-size_entry.grid(row=1, column=1, padx=5, pady=5, sticky=W)
+size_entry.grid(row=1, column=0, padx=5, pady=5, sticky=W)
 
 # Min Value Entry
-Label(UI_FRAME, text="Min Value [0]", bg="grey").grid(row=1, column=2, padx=5, pady=5, sticky=W)
+Label(UI_FRAME, text="Min Value [0]", bg="white").grid(row=0, column=1, padx=5, pady=5)
 min_entry = Entry(UI_FRAME)
-min_entry.grid(row=1, column=3, padx=5, pady=5, sticky=W)
+min_entry.grid(row=1, column=1, padx=5, pady=5, sticky=W)
 
 # Max Value Entry
-Label(UI_FRAME, text="Max Value [100]", bg="grey").grid(row=1, column=4, padx=5, pady=5, sticky=W)
+Label(UI_FRAME, text="Max Value [100]", bg="white").grid(row=0, column=2, padx=5, pady=5)
 max_entry = Entry(UI_FRAME)
-max_entry.grid(row=2, column=4, padx=5, pady=5, sticky=W)
+max_entry.grid(row=1, column=2, padx=5, pady=5, sticky=W)
+
+# Row[2] -----
+
+# Generate Array Button
+ttk.Button(UI_FRAME, text="Generate Array", command=generate, width=11).grid(row=2, column=1, padx=5, pady=5)
+
+# Row[2 & 3] -----
+
+# Sorting Speed Slider
+Label(UI_FRAME, text="Sort Speed [Fast->Slow]", bg="white").grid(row=2, column=0, padx=5, pady=5)
+sort_speed = ttk.Scale(UI_FRAME, from_=.1, to=2, orient=HORIZONTAL, length=190, value=.1)
+sort_speed.grid(row=3, column=0, padx=5, pady=5)
+
+# Sorting Method Selection
+Label(UI_FRAME, text="Algorithm: ", bg="white").grid(row=2, column=2, padx=5, pady=5)
+algo_menu = ttk.Combobox(UI_FRAME, textvariable=selected_algo, width=18, values=[
+    "Bubble Sort", "Heap Sort", "Merge Sort", "Quick Sort"]
+                         )
+algo_menu.grid(row=3, column=2, padx=5, pady=5)
+algo_menu.current(0)
+
+# Row[4] -----
+
+# Sort Array Button
+ttk.Button(UI_FRAME, text="Sort", command=sort_selection, width=11, style="TButton").grid(row=4, column=1, padx=5, pady=5)
 
 
 # ALGORITHMS -----
@@ -163,6 +169,7 @@ def bubble_sort(data, sort_speed):
     # print(data)
 
 
+# Bubble Sort -->  https://www.geeksforgeeks.org/heap-sort/
 def heap_sort(data, sort_speed):
     n = len(data)
 
@@ -172,11 +179,11 @@ def heap_sort(data, sort_speed):
 
     # Heapify Function (2nd step after creating the max heap)
     for i in range(n-1, 0, -1):
-        print("------ HELLO ------")
         data[i], data[0] = data[0], data[i]
         heapify(data, i, 0, sort_speed)
 
 
+# Heap Sort Helper Function
 def heapify(data, n, i, sort_speed):
     largest_val = i  # Largest Valued Index
     # print(largest_val)
@@ -202,7 +209,7 @@ def heapify(data, n, i, sort_speed):
     # i is initialized from the end of the data array, so by swapping below, we move the larger value to the end = sort
     if largest_val != i:  # Sort of a Base Case, which will end a recursive run of the heapify function
         data[i], data[largest_val] = data[largest_val], data[i]  # Swap parent and larger valued child indices
-        print(i)
+
         draw_data(data, hs_get_color_array(len(data), l_child, r_child, largest_val))
         time.sleep(sort_speed)
 
@@ -218,6 +225,7 @@ def merge_sort(data, left, right, sort_speed):
         merge(data, left, middle, right, sort_speed)  # This compares and merges the elements back together in order
 
 
+# Merge Sort Helper Function
 def merge(data, left, middle, right, sort_speed):
     draw_data(data, ms_get_color_array(len(data), left, middle, right))
     time.sleep(sort_speed)
@@ -280,17 +288,16 @@ def partition(data, low, high, sort_speed):
     return i + 1  # This is the final position of the pivot index
 
 
-# Below are specific coloring functions per sort type ------
+# ----- Below are specific coloring functions per sort type ------
+
 def hs_get_color_array(data_length, l_child, r_child, largest_val):
     color_array = ["red" for _i in range(0, len(data))]
 
     if l_child < data_length:
-        color_array[l_child] = "green"
+        color_array[l_child] = "blue"
     if r_child < data_length:
-        color_array[r_child] = "green"
+        color_array[r_child] = "blue"
     color_array[largest_val] = "yellow"
-
-    #if sorted_index:
 
     return color_array
 
