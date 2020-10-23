@@ -6,7 +6,7 @@ import time
 root = Tk()
 root.title("Sorting Algorithm Visualization")
 root.maxsize(900, 800)
-root.config(bg="black")
+root.config(bg="white")
 
 # Variables
 selected_algo = StringVar()
@@ -66,7 +66,7 @@ def generate():
     if min_val < 0 or min_val > 100:
         min_val = 0
 
-    if max_val > 100 or max_val < 100:
+    if max_val > 100 or max_val < 0:
         max_val = 100
 
     if size_val > 50 or size_val < 3:
@@ -79,7 +79,7 @@ def generate():
     for _i in range(0, size_val):
         data.append(random.randrange(min_val, max_val + 1))
 
-    color_array = ["red" for _i in range(0, len(data))]  # Produces ["red", "red", "red", ...]
+    color_array = ["white" for _i in range(0, len(data))]  # Produces ["red", "red", "red", ...]
     draw_data(data, color_array)
 
 
@@ -132,7 +132,7 @@ def validate(user_entry):
 vcmd = root.register(validate)  # Validate Command // must wrap the function
 
 # Array Size
-Label(UI_FRAME, text="Size [3-25]", bg="white").grid(row=0, column=0, padx=5, pady=5, sticky=S)
+Label(UI_FRAME, text="Size [3-50]", bg="white").grid(row=0, column=0, padx=5, pady=5, sticky=S)
 size_entry = Entry(UI_FRAME, validate="key", validatecommand=(vcmd, "%P"))
 size_entry.grid(row=1, column=0, padx=5, pady=5, sticky=W)
 
@@ -159,7 +159,7 @@ sort_speed = ttk.Scale(UI_FRAME, from_=.1, to=2, orient=HORIZONTAL, length=190, 
 sort_speed.grid(row=3, column=0, padx=5, pady=5)
 
 # Sorting Method Selection
-Label(UI_FRAME, text="Algorithm: ", bg="white").grid(row=2, column=2, padx=5, pady=5)
+Label(UI_FRAME, text="Algorithm", bg="white").grid(row=2, column=2, padx=5, pady=5)
 algo_menu = ttk.Combobox(UI_FRAME, textvariable=selected_algo, width=18, values=[
     "Bubble Sort", "Heap Sort", "Merge Sort", "Quick Sort"]
                          )
@@ -180,7 +180,7 @@ def bubble_sort(data, sort_speed):
         for j in range(0, len(data) - 1 - i):
             if data[j] > data[j + 1]:
                 data[j], data[j + 1] = data[j + 1], data[j]
-                color_array = ["green" if x == j or x == (j + 1) else "red" for x in range(0, len(data))]
+                color_array = ["green" if x == j or x == (j + 1) else "white" for x in range(0, len(data))]
                 draw_data(data, color_array)
                 time.sleep(sort_speed)
     # print(data)
@@ -308,7 +308,7 @@ def partition(data, low, high, sort_speed):
 # ----- Below are specific coloring functions per sort type ------
 
 def hs_get_color_array(data_length, l_child, r_child, largest_val):
-    color_array = ["red" for _i in range(0, len(data))]
+    color_array = ["white" for _i in range(0, len(data))]
 
     if l_child < data_length:
         color_array[l_child] = "blue"
@@ -335,7 +335,7 @@ def ms_get_color_array(data_length, left, middle, right):
 
 
 def qs_get_color_array(data_length, low, high, smaller_val, comparison_val=None):
-    color_array = ["red" for _i in range(0, data_length)]  # Base coloring is all red
+    color_array = ["white" for _i in range(0, data_length)]  # Base coloring is all red
     for i in range(0, data_length):
         if i == low:
             color_array[i] = "green"
