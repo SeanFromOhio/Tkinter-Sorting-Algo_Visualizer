@@ -56,12 +56,12 @@ def generate():
     try:
         max_val = int(max_entry.get())
     except:
-        max_val = 10
+        max_val = 100
 
     try:
         size_val = int(size_entry.get())
     except:
-        size_val = 10
+        size_val = 25
 
     if min_val < 0 or min_val > 100:
         min_val = 0
