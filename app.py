@@ -186,7 +186,7 @@ def bubble_sort(data, sort_speed):
     # print(data)
 
 
-# Bubble Sort -->  https://www.geeksforgeeks.org/heap-sort/
+# Heap Sort -->  https://www.geeksforgeeks.org/heap-sort/
 def heap_sort(data, sort_speed):
     n = len(data)
 
